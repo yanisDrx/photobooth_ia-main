@@ -349,16 +349,16 @@ sudo apt install python3.10 python3.10-venv python3.10-dev
 
 ---
 
-## 3️⃣ Faisabilité technique
+## Faisabilité technique
 
-### 3.1 Détection du poing fermé
+### 1 Détection du poing fermé
 - **Bibliothèque** : `mediapipe` (Hands)  
 - **Principe** :
   - Mediapipe fournit 21 points clés de la main.
   - Un poing fermé peut être détecté si les **tips de tous les doigts** sont **plus bas que leurs articulations de base** (coordonnées y dans l’image).  
   - Ajouter un **timer / cooldown** pour stabiliser la détection et éviter les faux positifs.  
 
-### 3.2 Application d’un filtre sur une vidéo en temps réel
+### 2 Application d’un filtre sur une vidéo en temps réel
 - **Bibliothèque** : `opencv-python`
 - **Principe** :
   - On applique le filtre sur **une copie du flux vidéo**, sans modifier l’image originale capturée.
@@ -371,14 +371,14 @@ sudo apt install python3.10 python3.10-venv python3.10-dev
   - La performance doit rester élevée (≥30 fps) pour garder le flux fluide.
   - Il faut éviter d’appliquer le filtre sur les images destinées à l’IA (StableDiffusion), sinon la génération sera modifiée.
 
-### 3.3 Gestion de l’état du filtre
+### 3 Gestion de l’état du filtre
 - Utiliser une **variable booléenne globale** (`filter_active`) pour indiquer si le filtre est activé ou non.
 - La détection du poing inversera l’état du filtre.
 - Affichage d’un **feedback visuel** (icône ou texte) pour que l’utilisateur sache si le filtre est actif.
 
 ---
 
-## 4️⃣ Modules et bibliothèques
+## Modules et bibliothèques
 
 | Module / Lib      | Usage                                                                 |
 |------------------|----------------------------------------------------------------------|
@@ -393,7 +393,7 @@ sudo apt install python3.10 python3.10-venv python3.10-dev
 
 ---
 
-## 5️⃣ Algorithme proposé
+## Algorithme proposé
 
 ```text
 Pour chaque frame du flux webcam :

@@ -339,10 +339,11 @@ Stable Diffusion WebUI nécessite **Python 3.10.x** (pas 3.11, 3.12 ou supérieu
 ```bash
 sudo apt update
 sudo apt install python3.10 python3.10-venv python3.10-dev
+```
 
 
 
-** -------------------------- MODIFICATIONS DU PROJET ------------------------------ **
+**-------------------------- MODIFICATIONS DU PROJET ------------------------------**
 
 
 

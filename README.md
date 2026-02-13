@@ -339,3 +339,73 @@ Stable Diffusion WebUI nécessite **Python 3.10.x** (pas 3.11, 3.12 ou supérieu
 ```bash
 sudo apt update
 sudo apt install python3.10 python3.10-venv python3.10-dev
+
+
+
+** -------------------------- MODIFICATIONS DU PROJET ------------------------------ **
+
+
+
+---
+
+## 3️⃣ Faisabilité technique
+
+### 3.1 Détection du poing fermé
+- **Bibliothèque** : `mediapipe` (Hands)  
+- **Principe** :
+  - Mediapipe fournit 21 points clés de la main.
+  - Un poing fermé peut être détecté si les **tips de tous les doigts** sont **plus bas que leurs articulations de base** (coordonnées y dans l’image).  
+  - Ajouter un **timer / cooldown** pour stabiliser la détection et éviter les faux positifs.  
+
+### 3.2 Application d’un filtre sur une vidéo en temps réel
+- **Bibliothèque** : `opencv-python`
+- **Principe** :
+  - On applique le filtre sur **une copie du flux vidéo**, sans modifier l’image originale capturée.
+  - Les filtres peuvent être de différents types :  
+    - **Cartoon / bande dessinée** : combinaison de `bilateralFilter` et `edgeDetection`.
+    - **Couleur néon / hologramme** : ajustement des canaux colorimétriques et overlay semi-transparent.  
+  - La vidéo est affichée avec `cv2.imshow(frame)`, le filtre est appliqué sur `frame.copy()`.
+
+- **Points critiques** :
+  - La performance doit rester élevée (≥30 fps) pour garder le flux fluide.
+  - Il faut éviter d’appliquer le filtre sur les images destinées à l’IA (StableDiffusion), sinon la génération sera modifiée.
+
+### 3.3 Gestion de l’état du filtre
+- Utiliser une **variable booléenne globale** (`filter_active`) pour indiquer si le filtre est activé ou non.
+- La détection du poing inversera l’état du filtre.
+- Affichage d’un **feedback visuel** (icône ou texte) pour que l’utilisateur sache si le filtre est actif.
+
+---
+
+## 4️⃣ Modules et bibliothèques
+
+| Module / Lib      | Usage                                                                 |
+|------------------|----------------------------------------------------------------------|
+| `opencv-python`   | Capture vidéo, traitement image, application du filtre, affichage     |
+| `mediapipe`       | Détection des mains et reconnaissance des gestes (Victory, Pouce, Poing) |
+| `numpy`           | Calculs et manipulation d’images                                     |
+| `time`            | Gestion des cooldowns et timers de maintien des gestes               |
+
+**Optionnel / futur** :  
+- `pygame.mixer` ou `playsound` pour ajouter un feedback sonore.  
+- `PyQt5 / Kivy` si l’on veut des boutons interactifs pour changer de filtre.
+
+---
+
+## 5️⃣ Algorithme proposé
+
+```text
+Pour chaque frame du flux webcam :
+1. Convertir l’image BGR → RGB (pour Mediapipe)
+2. Détecter les gestes :
+   - Victory
+   - Pouce
+   - Poing fermé
+3. Si poing fermé détecté et cooldown dépassé :
+   - Inverser filter_active (True/False)
+   - Réinitialiser cooldown
+4. Si filter_active :
+   - Appliquer le filtre sur la copie du frame
+5. Afficher la frame filtrée ou normale
+6. Continuer la capture
+

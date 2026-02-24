@@ -8,7 +8,7 @@ Ce projet propose une expérience immersive où l’utilisateur interagit unique
 
 # 📑 Sommaire
 
-- [1. Présentation claire du projet](#1-présentation-claire-du-projet)
+- [1. Présentation du projet](#1-présentation-du-projet)
 - [2. Storyboard utilisateur (expérience complète)](#2-storyboard-utilisateur-expérience-complète)
 - [3. Fonctionnement général du système](#3-fonctionnement-général-du-système)
 - [4. Système d’interaction gestuelle](#4-système-dinteraction-gestuelle)
@@ -21,7 +21,7 @@ Ce projet propose une expérience immersive où l’utilisateur interagit unique
 
 ---
 
-# 1. Présentation claire du projet
+# 1. Présentation du projet
 
 Ce projet implémente un photobooth interactif basé sur :
 

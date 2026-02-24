@@ -1,4 +1,4 @@
-# 🎨 Photo Booth IA – MDM 2025
+# Photo Booth IA – MDM 2025
 
 Photobooth intelligent combinant vision par ordinateur, interaction gestuelle et génération d’images via Stable Diffusion XL.
 
@@ -6,28 +6,26 @@ Ce projet propose une expérience immersive où l’utilisateur interagit unique
 
 ---
 
-# 📑 Sommaire
+# Sommaire
 
-- [1. Présentation claire du projet](#1-présentation-claire-du-projet)
+- [1. Présentation du projet](#1-présentation-du-projet)
 - [2. Storyboard utilisateur (expérience complète)](#2-storyboard-utilisateur-expérience-complète)
 - [3. Fonctionnement général du système](#3-fonctionnement-général-du-système)
-- [4. Système d’interaction gestuelle](#4-système-dinteraction-gestuelle)
-- [5. Profils de filtres & prompts](#5-profils-de-filtres--prompts)
-- [6. Architecture technique](#6-architecture-technique)
-- [7. Prérequis matériel](#7-prérequis-matériel)
-- [8. Dépendances logicielles](#8-dépendances-logicielles)
-- [9. Recherche & choix de conception](#9-recherche--choix-de-conception)
-- [10. Pistes d’amélioration](#10-pistes-damélioration)
+- [4. Profils de filtres & prompts](#5-profils-de-filtres--prompts)
+- [5. Architecture technique et dépendances logicielles](#6-architecture-technique-et-dépendances-logicielles)
+- [6. Prérequis matériel](#7-prérequis-matériel)
+- [7. Recherche & choix de conception](#9-recherche--choix-de-conception)
+- [8. Pistes d’amélioration](#10-pistes-damélioration)
 
 ---
 
-# 1. Présentation claire du projet
+# 1. Présentation du projet
 
 Ce projet implémente un photobooth interactif basé sur :
 
 - 📸 Capture webcam en temps réel
 - 🖐️ Détection et reconnaissance de gestes
-- 🎨 Prévisualisation instantanée de styles
+- 🎨 Prévisualisation instantanée de styles (filtres temps réel)
 - 🤖 Génération d’image via **Stable Diffusion XL + ControlNet OpenPose**
 - 🖼️ Ajout automatique d’un logo
 - 🖨️ Impression physique au format A6 glacé
@@ -40,36 +38,50 @@ L’objectif est de créer une expérience fluide, intuitive et immersive.
 
 # 2. Storyboard utilisateur (expérience complète)
 
-Voici le déroulement concret d’une utilisation typique :
-
-### Étape 1 — Mise en place
+### Étape 1 — Positionnement
 L’utilisateur se place devant la webcam.
 
-### Étape 2 — Exploration des styles
-Il lève la main gauche pour tester différents univers visuels en prévisualisation live.
+### Étape 2 — Prévisualisation (main gauche)
 
-Chaque nombre de doigts correspond à un style.
+Il lève des doigts avec la **main gauche** pour tester différents styles.
 
-### Étape 3 — Sélection du style final
-Une fois le style choisi, il reproduit le même nombre de doigts avec la main droite.
+ -> Cette action applique uniquement un filtre local (preview).
+ -> Aucun prompt n’est encore envoyé à l’IA.
 
-Un message confirme :  
-> “Profil X sélectionné”
+### Étape 3 — Sélection du style (main droite)
 
-### Étape 4 — Capture
+Il reproduit le même nombre de doigts avec la **main droite**.
+
+ -> Cette action sélectionne officiellement le profil.
+ -> Le prompt correspondant est chargé et sera transmis à l’IA lors de la génération.
+ -> Un message de confirmation du choix du profil est affiché sur l'écran
+
+### Étape 4 — Génération IA
+
+Le système envoie à Stable Diffusion :
+
+- l’image originale
+- le prompt sélectionné via la main droite
+
+L’IA applique le style choisi.
+
+### Étape 5 — Capture  
+
 Il déclenche la capture avec 👍 pouce gauche.
 
-La photo originale est enregistrée.
-
-### Étape 5 — Génération IA
-L’image est envoyée à Stable Diffusion XL via `img2img` avec ControlNet OpenPose.
-
-L’IA applique le style sélectionné tout en conservant la posture.
-
+ -> L'utilisateur doit garder son pouce levé 2 secondes pour confirmer la capture.
+ -> Un chargement indiquant la progression sur l'écoulement du cooldown s'affiche.
+ -> Une fois le cooldown terminé, un message de confirmation s'affiche.
+ -> L’image générée par IA est enregistrée.
+ 
 ### Étape 6 — Impression
-Si le résultat lui convient, il valide l’impression avec 👍 pouce droit.
 
-L’image est imprimée immédiatement.
+Validation avec 👍 pouce droit.
+
+ -> L'utilisateur doit garder son pouce levé 2 secondes pour confirmer l'impression.
+ -> Un chargement indiquant la progression sur l'écoulement du cooldown s'affiche.
+ -> Une fois le cooldown terminé, un message de confirmation s'affiche.
+ -> L’image générée est imprimée.
 
 ---
 
@@ -80,37 +92,32 @@ L’image est imprimée immédiatement.
 | ✋ Main gauche | Prévisualisation des filtres + Capture |
 | 🤚 Main droite | Sélection du prompt + Impression |
 
-### Principe clé
+## Principes clés
 
-- La **prévisualisation** n’affecte jamais l’image envoyée à l’IA.
+- La **prévisualisation** n’affecte jamais l’image (le prompt) envoyée à l’IA.
 - La **main droite détermine le prompt réel** envoyé à Stable Diffusion.
 - Les gestes système (capture / impression) sont isolés pour éviter tout conflit.
 
----
-
-# 4. Système d’interaction gestuelle
-
-## Règles fondamentales
+## Règles de gestuelle
 
 - Le pouce n’est **jamais utilisé pour choisir un profil**
 - Les profils commencent à partir de l’index levé
 - Un poing fermé = état neutre
 - Le nombre de doigts levés = numéro du profil
 
-Cette logique évite les conflits entre sélection de style et actions système.
-
 ---
 
-# 5. Profils de filtres & prompts
+# 4. Profils de filtres & prompts
 
-## Logique
+## Tableau récapitulatif
 
-- Main gauche → preview visuelle locale (OpenCV)
-- Main droite → sélection du prompt Stable Diffusion
-
-Le nombre de doigts correspond au même profil pour les deux mains.
-
----
+| Geste | Profil | Image |
+|-------|--------|-------|
+| ✊ Poing fermé | Default | <img src="images_profils/profil0.jpg" width="200"> |
+| ☝ 1 doigt | Futuriste cartoon | <img src="images_profils/profil1.jpg" width="200"> |
+| ✌ 2 doigts | Médiéval | <img src="images_profils/profil2.png" width="200"> |
+| 🤟 3 doigts | Naturel / Jungle | <img src="images_profils/profil3.png" width="200"> |
+| 🖖 4 doigts | Artistique / Peinture | <img src="images_profils/profil4.jpg" width="200"> |
 
 ## Prompts de Profils
 
@@ -185,24 +192,42 @@ NEGATIVE_PROMPT_ARTISTIC = (
 
 ---
 
-# 6. Architecture technique
+# 5. Architecture technique et dépendances logicielles
 
 ## Pipeline simplifié
 
-1. Capture frame via OpenCV
+1. Capture image via OpenCV
 2. Détection des mains via MediaPipe
-3. Comptage des doigts
+3. Comptage/Reconnaissance des doigts
 4. Détermination du profil
 5. Capture image originale
 6. Encodage base64
 7. Envoi à Stable Diffusion WebUI
 8. Réception image stylisée
-9. Ajout logo
-10. Impression
+9. Capture et/ou impression de l'image générée
+
+## Dépendances Logicielles
+
+### Stable Diffusion WebUI
+
+- PyTorch 2.5.1 + CUDA 12.1
+- xFormers 0.0.23
+- Diffusers 0.31.0
+- ControlNet Aux 0.0.10
+- MediaPipe 0.10.21
+- ONNX Runtime GPU 1.17.1
+
+### Photo Booth
+
+- OpenCV 4.11.0
+- MediaPipe 0.10.21
+- NumPy 1.26.2
+- Requests 2.32.5
+- Python 3.10.x
 
 ---
 
-# 7. Prérequis matériel
+# 6. Prérequis matériel
 
 | Composant | Spécification |
 |-----------|--------------|
@@ -214,42 +239,21 @@ NEGATIVE_PROMPT_ARTISTIC = (
 
 ---
 
-# 8. Dépendances logicielles
+# 7. Recherche & choix de conception
 
-## Stable Diffusion WebUI
-
-- PyTorch 2.5.1 + CUDA 12.1
-- xFormers 0.0.23
-- Diffusers 0.31.0
-- ControlNet Aux 0.0.10
-- MediaPipe 0.10.21
-- ONNX Runtime GPU 1.17.1
-
-## Photo Booth
-
-- OpenCV 4.11.0
-- MediaPipe 0.10.21
-- NumPy 1.26.2
-- Requests 2.32.5
-- Python 3.10.x
-
----
-
-# 9. Recherche & choix de conception
-
-## Modification du Projet initial - Conflit avec ✌
+## Conflit avec Symbole V
 
 Servait à capturer.
-
 Conflit avec Profil 2.
-
 Solution :
 
 - Capture = 👍 gauche
 - Impression = 👍 droite
 
+Interaction claire et intuitive.
+
 ---
 
 # 10. Pistes d’amélioration
 
-- 
+- ...

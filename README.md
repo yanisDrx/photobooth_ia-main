@@ -417,3 +417,27 @@ Fin de boucle
 
 Fermer caméra et fenêtres
 ```
+
+# 11. Potentiels problèmes et conclusion
+
+## Potentiels problèmes
+
+Lors de la conception et de l’utilisation du photobooth IA, plusieurs difficultés peuvent survenir :
+
+- **Reconnaissance des doigts** : confusion entre profils si les doigts ne sont pas parfaitement levés, ou détection partielle d’une main.
+- **Latence IA / API** : le temps de génération Stable Diffusion peut être long selon la taille de l’image, le nombre de profils ou la puissance GPU.
+- **Compatibilité matériel** : certaines webcams ou imprimantes peuvent ne pas répondre aux paramètres définis, ou afficher des erreurs de dimensions.
+- **Qualité image finale** : les prompts peuvent produire des résultats inattendus, nécessitant des ajustements manuels ou des filtres supplémentaires.
+- **Problèmes de dépendances** : versions de PyTorch, CUDA, MediaPipe ou OpenCV non compatibles pouvant provoquer des plantages.
+
+## Conclusion
+
+Ce projet illustre la fusion de plusieurs technologies : vision par ordinateur, reconnaissance gestuelle et génération d’images IA. Il offre une expérience immersive, entièrement contrôlée par gestes, allant de la prévisualisation d’un style jusqu’à la capture et l’impression physique d'une image. 
+
+Une architecture modulaire permettrait :
+
+- de tester de nouveaux filtres et prompts,
+- d’adapter le système à différents matériels,
+- et d’optimiser l’expérience utilisateur en toute sécurité.
+
+Bien que certaines limitations subsistent, ce photobooth IA constitue une base solide pour explorer l’interaction naturelle avec les systèmes de génération d’images et propose une expérience ludique et originale, tout en restant extensible pour des améliorations futures.

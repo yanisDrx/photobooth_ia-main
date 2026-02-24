@@ -26,7 +26,7 @@ Ce projet implémente un photobooth interactif basé sur :
 
 - 📸 Capture webcam en temps réel
 - 🖐️ Détection et reconnaissance de gestes
-- 🎨 Prévisualisation instantanée de styles
+- 🎨 Prévisualisation instantanée de styles (filtres temps réel)
 - 🤖 Génération d’image via **Stable Diffusion XL + ControlNet OpenPose**
 - 🖼️ Ajout automatique d’un logo
 - 🖨️ Impression physique au format A6 glacé
@@ -39,36 +39,54 @@ L’objectif est de créer une expérience fluide, intuitive et immersive.
 
 # 2. Storyboard utilisateur (expérience complète)
 
-Voici le déroulement concret d’une utilisation typique :
-
-### Étape 1 — Mise en place
+### Étape 1 — Positionnement
 L’utilisateur se place devant la webcam.
 
-### Étape 2 — Exploration des styles
-Il lève la main gauche pour tester différents univers visuels en prévisualisation live.
+---
 
-Chaque nombre de doigts correspond à un style.
+### Étape 2 — Prévisualisation (main gauche)
 
-### Étape 3 — Sélection du style final
-Une fois le style choisi, il reproduit le même nombre de doigts avec la main droite.
+Il lève des doigts avec la **main gauche** pour tester différents styles.
 
-Un message confirme :  
-> “Profil X sélectionné”
+ -> Cette action applique uniquement un filtre local (preview).
+ -> Aucun prompt n’est encore envoyé à l’IA.
+
+---
+
+### Étape 3 — Sélection du style (main droite)
+
+Il reproduit le même nombre de doigts avec la **main droite**.
+
+ -> Cette action sélectionne officiellement le profil.
+ -> Le prompt correspondant est chargé et sera transmis à l’IA lors de la génération.
+
+---
 
 ### Étape 4 — Capture
+
 Il déclenche la capture avec 👍 pouce gauche.
 
-La photo originale est enregistrée.
+ -> L’image originale est enregistrée.
+ -> Le prompt validé (main droite) est associé à cette image.
+
+---
 
 ### Étape 5 — Génération IA
-L’image est envoyée à Stable Diffusion XL via `img2img` avec ControlNet OpenPose.
 
-L’IA applique le style sélectionné tout en conservant la posture.
+Le système envoie à Stable Diffusion :
+
+- l’image originale
+- le prompt sélectionné via la main droite
+
+L’IA applique le style choisi.
+
+---
 
 ### Étape 6 — Impression
-Si le résultat lui convient, il valide l’impression avec 👍 pouce droit.
 
-L’image est imprimée immédiatement.
+Validation avec 👍 pouce droit.
+
+L’image générée est imprimée.
 
 ---
 
@@ -190,7 +208,7 @@ NEGATIVE_PROMPT_ARTISTIC = (
 
 1. Capture frame via OpenCV
 2. Détection des mains via MediaPipe
-3. Comptage des doigts
+3. Comptage/Reconnaissance des doigts
 4. Détermination du profil
 5. Capture image originale
 6. Encodage base64

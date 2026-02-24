@@ -11,12 +11,11 @@ Ce projet propose une expérience immersive où l’utilisateur interagit unique
 - [1. Présentation du projet](#1-présentation-du-projet)
 - [2. Storyboard utilisateur (expérience complète)](#2-storyboard-utilisateur-expérience-complète)
 - [3. Fonctionnement général du système](#3-fonctionnement-général-du-système)
-- [4. Système d’interaction gestuelle](#4-système-dinteraction-gestuelle)
-- [5. Profils de filtres & prompts](#5-profils-de-filtres--prompts)
-- [6. Architecture technique](#6-architecture-technique)
-- [7. Prérequis matériel](#7-prérequis-matériel)
-- [8. Recherche & choix de conception](#9-recherche--choix-de-conception)
-- [9. Pistes d’amélioration](#10-pistes-damélioration)
+- [4. Profils de filtres & prompts](#5-profils-de-filtres--prompts)
+- [5. Architecture technique et dépendances logicielles](#6-architecture-technique-et-dépendances-logicielles)
+- [6. Prérequis matériel](#7-prérequis-matériel)
+- [7. Recherche & choix de conception](#9-recherche--choix-de-conception)
+- [8. Pistes d’amélioration](#10-pistes-damélioration)
 
 ---
 
@@ -55,15 +54,9 @@ Il reproduit le même nombre de doigts avec la **main droite**.
 
  -> Cette action sélectionne officiellement le profil.
  -> Le prompt correspondant est chargé et sera transmis à l’IA lors de la génération.
+ -> Un message de confirmation du choix du profil est affiché sur l'écran
 
-### Étape 4 — Capture
-
-Il déclenche la capture avec 👍 pouce gauche.
-
- -> L’image originale est enregistrée.
- -> Le prompt validé (main droite) est associé à cette image.
-
-### Étape 5 — Génération IA
+### Étape 4 — Génération IA
 
 Le système envoie à Stable Diffusion :
 
@@ -72,11 +65,23 @@ Le système envoie à Stable Diffusion :
 
 L’IA applique le style choisi.
 
+### Étape 5 — Capture  
+
+Il déclenche la capture avec 👍 pouce gauche.
+
+ -> L'utilisateur doit garder son pouce levé 2 secondes pour confirmer la capture.
+ -> Un chargement indiquant la progression sur l'écoulement du cooldown s'affiche.
+ -> Une fois le cooldown terminé, un message de confirmation s'affiche.
+ -> L’image générée par IA est enregistrée.
+ 
 ### Étape 6 — Impression
 
 Validation avec 👍 pouce droit.
 
-L’image générée est imprimée.
+ -> L'utilisateur doit garder son pouce levé 2 secondes pour confirmer l'impression.
+ -> Un chargement indiquant la progression sur l'écoulement du cooldown s'affiche.
+ -> Une fois le cooldown terminé, un message de confirmation s'affiche.
+ -> L’image générée est imprimée.
 
 ---
 
@@ -87,37 +92,32 @@ L’image générée est imprimée.
 | ✋ Main gauche | Prévisualisation des filtres + Capture |
 | 🤚 Main droite | Sélection du prompt + Impression |
 
-### Principe clé
+## Principes clés
 
-- La **prévisualisation** n’affecte jamais l’image envoyée à l’IA.
+- La **prévisualisation** n’affecte jamais l’image (le prompt) envoyée à l’IA.
 - La **main droite détermine le prompt réel** envoyé à Stable Diffusion.
 - Les gestes système (capture / impression) sont isolés pour éviter tout conflit.
 
----
-
-# 4. Système d’interaction gestuelle
-
-## Règles fondamentales
+## Règles de gestuelle
 
 - Le pouce n’est **jamais utilisé pour choisir un profil**
 - Les profils commencent à partir de l’index levé
 - Un poing fermé = état neutre
 - Le nombre de doigts levés = numéro du profil
 
-Cette logique évite les conflits entre sélection de style et actions système.
-
 ---
 
-# 5. Profils de filtres & prompts
+# 4. Profils de filtres & prompts
 
-## Logique
+## Tableau récapitulatif
 
-- Main gauche → preview visuelle locale (OpenCV)
-- Main droite → sélection du prompt Stable Diffusion
-
-Le nombre de doigts correspond au même profil pour les deux mains.
-
----
+| Geste | Profil | Image |
+|-------|--------|-------|
+| ✊ Poing fermé | Default (aucun prompt) | ![Default](../images_profils/profil0.png) |
+| ☝ 1 doigt | Futuriste | ![Profil 1 Futuriste](../images_profils/profil1.png) |
+| ✌ 2 doigts | Médiéval | ![Profil 2 Médiéval](../images_profils/profil2.png) |
+| 🤟 3 doigts | Jungle / Nature | ![Profil 3 Jungle](../images_profils/profil3.png) |
+| 🖖 4 doigts | Artistique | ![Profil 4 Artistique](../images_profils/profil4.png) |
 
 ## Prompts de Profils
 
@@ -192,11 +192,11 @@ NEGATIVE_PROMPT_ARTISTIC = (
 
 ---
 
-# 6. Architecture technique
+# 5. Architecture technique et dépendances logicielles
 
 ## Pipeline simplifié
 
-1. Capture frame via OpenCV
+1. Capture image via OpenCV
 2. Détection des mains via MediaPipe
 3. Comptage/Reconnaissance des doigts
 4. Détermination du profil
@@ -204,10 +204,10 @@ NEGATIVE_PROMPT_ARTISTIC = (
 6. Encodage base64
 7. Envoi à Stable Diffusion WebUI
 8. Réception image stylisée
-9. Ajout logo
-10. Impression
+9. Capture et/ou impression de l'image générée
 
 ## Dépendances Logicielles
+
 ### Stable Diffusion WebUI
 
 - PyTorch 2.5.1 + CUDA 12.1
@@ -227,7 +227,7 @@ NEGATIVE_PROMPT_ARTISTIC = (
 
 ---
 
-# 7. Prérequis matériel
+# 6. Prérequis matériel
 
 | Composant | Spécification |
 |-----------|--------------|
@@ -239,25 +239,7 @@ NEGATIVE_PROMPT_ARTISTIC = (
 
 ---
 
-# 8. Dépendances logicielles
-
-
----
-
-# 9. Recherche & choix de conception
-
-## Conflit du pouce
-
-Le pouce était initialement un profil.
-
-Problème : déjà utilisé pour l’impression.
-
-Solution :
-
-- Suppression du pouce comme profil
-- Profils démarrent à l’index
-
----
+# 7. Recherche & choix de conception
 
 ## Conflit avec Symbole V
 

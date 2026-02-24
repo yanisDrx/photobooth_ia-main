@@ -4,6 +4,7 @@ Photobooth intelligent combinant vision par ordinateur, interaction gestuelle et
 
 Ce projet propose une expérience immersive où l’utilisateur interagit uniquement avec ses mains pour choisir un univers visuel, capturer une photo et générer une version stylisée par IA, prête à être imprimée.
 
+Ce projet s’inspire et se base sur le photobooth créé par Fabrice JUMEL. Seul le README à été modifié afin d'y ajouter des modifications potentielles. L'ancien README correspondant au code python et aux autres fichiers n'est autre que le fichier OLD_README que l'on peut trouver dans ce même dossier.
 ---
 
 # Sommaire
@@ -254,6 +255,165 @@ Interaction claire et intuitive.
 
 ---
 
-# 10. Pistes d’amélioration
+# 10. Etapes d’amélioration / Implémentation détaillée
 
-- ...
+Cette section décrit comment, à partir du code existant, le projet peut être étendu et structuré pour atteindre l’objectif final défini dans le README. Chaque étape précise les ajouts ou modifications nécessaires, avec le code associé lorsque possible.
+
+---
+
+## Étape 1 — Gestion des imports et configuration initiale
+
+Les imports et constantes sont **largement conservés**. Les modifications mineures concernent :
+
+- Ajout des prompts par profil
+- Paramètres généraux pour Stable Diffusion et MediaPipe
+- Gestion du logo et des écrans
+
+```python
+# Les imports restent les mêmes
+import cv2
+import os
+import time
+import base64
+import subprocess
+from datetime import datetime
+import requests
+import numpy as np
+import mediapipe as mp
+import sys
+import argparse
+
+# Paramètres caméra et Stable Diffusion
+CAMERA_WIDTH, CAMERA_HEIGHT = 1280, 720
+WIDTH, HEIGHT = 1280, 720
+DENOISING_STRENGTH = 0.62
+CFG_SCALE = 7.5
+...
+
+```
+## Étape 2 — Détection des gestes
+
+Le code de détection des gestes reste inchangé, mais il est crucial d'ajouter :
+Distinction entre main gauche (prévisualisation) et main droite (validation prompt)
+
+## Étape 3 — Prévisualisation (main gauche)
+
+Le nombre de doigts levés sur la main gauche déclenche uniquement la prévisualisation :
+Appliquer localement un filtre correspondant au profil
+Ne pas envoyer le prompt à Stable Diffusion
+
+```py
+def apply_preview(frame, fingers_count_left):
+    """Applique un filtre local selon la main gauche"""
+    if fingers_count_left == 1:
+        preview_img = apply_medieval_filter(frame)
+    elif fingers_count_left == 2:
+        preview_img = apply_jungle_filter(frame)
+    elif fingers_count_left == 3:
+        preview_img = apply_futuristic_filter(frame)
+    elif fingers_count_left == 4:
+        preview_img = apply_artistic_filter(frame)
+    else:
+        preview_img = frame  # Poing fermé
+    return preview_img
+
+```
+
+## Étape 4 — Sélection du prompt (main droite)
+
+Le nombre de doigts levés sur la main droite sélectionne le prompt correspondant pour la génération IA :
+
+```py
+def select_prompt(fingers_count_right):
+    """Retourne le prompt et negative_prompt selon main droite"""
+    if fingers_count_right == 1:
+        return PROMPT_MEDIEVAL, NEGATIVE_PROMPT_MEDIEVAL
+    elif fingers_count_right == 2:
+        return PROMPT_JUNGLE, NEGATIVE_PROMPT_JUNGLE
+    elif fingers_count_right == 3:
+        return PROMPT_FUTURISTIC, NEGATIVE_PROMPT_FUTURISTIC
+    elif fingers_count_right == 4:
+        return PROMPT_ARTISTIC, NEGATIVE_PROMPT_ARTISTIC
+    else:
+        return PROMPT, NEGATIVE_PROMPT  # Default
+```
+Cette fonction doit être appelée **au moment de la capture**, juste avant l’appel à l’API Stable Diffusion.
+
+## Étape 5 — Capture avec validation (pouce gauche)
+
+La capture de l’image originale se fait uniquement après :
+
+- Détection du pouce gauche levé pendant 2 secondes
+- Cooldown pour éviter les double captures
+
+## Étape 6 — Impression (pouce droit)
+
+L’impression se déclenche uniquement après :
+
+- Pouce droit levé pendant 2 secondes
+- Vérification que toutes les images IA + webcam sont prêtes
+- Cooldown pour éviter double impression
+
+```py
+if thumbs_detected_right and duration >= GESTURE_HOLD_DURATION:
+    print_images()
+```
+
+## Étape 7 — Intégration dans la boucle principale (`main()`)
+
+Cette étape combine toutes les fonctions précédentes dans la boucle principale pour gérer l’expérience utilisateur complète : prévisualisation, sélection du prompt, capture et impression.
+
+Principes clés :  
+
+- **Main gauche** : prévisualisation en temps réel selon le nombre de doigts levés.  
+- **Main droite** : sélection du prompt pour la génération IA.  
+- **Pouce gauche** : validation de la capture.  
+- **Pouce droit** : validation de l’impression.  
+- Gestion d’un **état interne** pour éviter les conflits (ex : pas d’impression pendant le traitement IA).  
+- Cooldowns et maintien du geste pour valider les actions.
+
+Exemple simplifié d’intégration dans `main()` :  
+
+```text
+Démarrage:
+    Charger le logo
+    Initialiser la caméra
+    Initialiser l’état = "waiting_capture"
+    Initialiser variables globales (images, cooldowns, etc.)
+
+Boucle principale (while True):
+
+    Lire image caméra -> frame
+
+    Détecter gestes des mains:
+        main gauche -> prévisualisation
+        main droite -> sélection du prompt
+        pouce gauche -> validation capture
+        pouce droit -> validation impression
+
+    Appliquer prévisualisation selon doigts main gauche
+    Sélectionner prompt selon doigts main droite
+
+    Afficher prévisualisation sur l’écran webcam
+
+    SI pouce gauche levé suffisamment longtemps:
+        Capturer frame finale
+        Envoyer à Stable Diffusion + ControlNet
+        Sauvegarder images IA avec logo
+        Mettre à jour image à afficher
+        Changer état = "ready_print"
+
+    SI pouce droit levé suffisamment longtemps ET état == "ready_print":
+        Imprimer toutes les images (webcam + IA)
+        Réinitialiser état = "waiting_capture"
+
+    Afficher l’image finale IA si disponible
+
+    Vérifier touches clavier:
+        q -> quitter
+        fallback touches (ex: space ou a) pour tester gestes
+
+Fin de boucle
+
+Fermer caméra et fenêtres
+```

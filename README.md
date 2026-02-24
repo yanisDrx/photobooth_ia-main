@@ -1,112 +1,290 @@
-# 🎨 Photo Booth IA - MDM 2025
+# 🎨 Photo Booth IA – MDM 2025
 
-Photo booth intelligent avec génération d'images par IA utilisant Stable Diffusion XL et détection de gestes en temps réel.
-
----
-
-## 📋 Description
-
-Ce projet crée un photobooth interactif qui :
-
-- 📸 Capture des photos via webcam avec détection de gestes
-- 🤖 Génère des images stylisées via **Stable Diffusion XL + ControlNet OpenPose**
-- 🖐️ Permet de choisir le prompt envoyé à Stable Diffusion XL à l'aide de gestes
-- 👁️ Permet la prévisualisation des profils de prompt à l'aide de filtres appliqués en temps réel
-- 🖼️ Applique automatiquement un logo transparent (template CPE)
-- 🖨️ Imprime les résultats sur imprimante HP Color LaserJet au format A6 glacé
+Photobooth intelligent combinant vision par ordinateur, interaction gestuelle et génération d’images via Stable Diffusion XL.
 
 ---
 
-# 🖐️ Système d'interaction gestuelle
+# 📑 Sommaire
 
-Le photobooth fonctionne avec une logique claire séparant :
-
-- **Main gauche → prévisualisation + capture**
-- **Main droite → sélection du prompt + impression**
-
-Chaque main a un rôle précis afin d'éviter les conflits de gestes.
-
----
-
-## 🎨 Profils de prompt (sélection avec la main droite)
-
-⚠️ Seuls les doigts à partir de l’index sont utilisés pour éviter tout conflit avec les gestes système.
-
-| Profil | Geste (main droite) | Effet |
-|--------|--------------------|-------|
-| 0 | Poing fermé | Image classique (aucun prompt IA) |
-| 1 | Index levé | Style futuristique cartoon |
-| 2 | Index + majeur levés | Style médiéval |
-| 3 | Index + majeur + annulaire levés | Style naturel |
-| 4 | Index + majeur + annulaire + auriculaire levés | Style artistique avancé |
-
-- Le profil sélectionné est confirmé à l’écran (ex: **"Profil 2 appliqué"**).
-- Ce profil détermine le prompt envoyé à Stable Diffusion lors de la génération.
+- [1. Présentation du projet](#1-présentation-du-projet)
+- [2. Fonctionnement général](#2-fonctionnement-général)
+- [3. Système d’interaction gestuelle](#3-système-dinteraction-gestuelle)
+- [4. Profils de filtres & prompts](#4-profils-de-filtres--prompts)
+- [5. Storyboard utilisateur](#5-workflow-utilisateur)
+- [6. Architecture technique](#6-architecture-technique)
+- [7. Prérequis matériel](#7-prérequis-matériel)
+- [8. Dépendances logicielles](#8-dépendances-logicielles)
+- [9. Recherche & choix de conception](#9-recherche--choix-de-conception)
+- [10. Pistes d’amélioration](#10-pistes-damélioration)
 
 ---
 
-## 👁️ Prévisualisation des profils (main gauche)
+# 1. Présentation du projet
 
-La main gauche permet uniquement de visualiser le rendu associé aux profils.
+Ce projet implémente un photobooth interactif capable de :
 
-| Geste (main gauche) | Effet |
-|---------------------|-------|
-| Poing fermé | Aucun filtre |
-| 1 doigt levé | Filtre correspondant au Profil 1 |
-| 2 doigts levés | Filtre correspondant au Profil 2 |
-| 3 doigts levés | Filtre correspondant au Profil 3 |
-| 4 doigts levés | Filtre correspondant au Profil 4 |
+- 📸 Capturer une image via webcam
+- 🖐️ Détecter des gestes en temps réel
+- 🎨 Prévisualiser des styles via filtres live
+- 🤖 Générer une image stylisée avec **Stable Diffusion XL + ControlNet OpenPose**
+- 🖼️ Ajouter automatiquement un logo
+- 🖨️ Imprimer le résultat au format A6 glacé
 
-Important :
-
-- La main gauche **n'applique jamais le prompt IA final**.
-- Elle applique seulement un filtre visuel temporaire sur le flux vidéo.
-- Le nombre de doigts correspond exactement aux profils disponibles.
-- Cela permet à l’utilisateur de tester visuellement avant d’appliquer le prompt réel.
+L’objectif est de proposer une expérience intuitive, immersive et sans interface tactile.
 
 ---
 
-## 📸 Capture et impression
+# 2. Fonctionnement général
 
-Les gestes système sont séparés pour éviter toute ambiguïté :
+| Main | Rôle |
+|------|------|
+| ✋ Main gauche | Prévisualisation des filtres + Capture |
+| 🤚 Main droite | Sélection du prompt + Impression |
 
-| Geste | Action |
-|-------|--------|
-| 👍 Pouce gauche levé (2s)| Capture la photo (déclenchement du compte à rebours) |
-| 👍 Pouce droit levé (2s)| Impression de la photo |
+Principe clé :
 
----
-
-## 🔄 Storyboard utilisateur complet
-
-0. Un utilisateur lance le programme Photobooth, puis se place en face de la webcam (seul ou à plusieurs)
-1. L'utilisateur peut tester (ou non) différents styles avec la main gauche. Ex : lève l'index gauche pour visualiser le filtre profil 1
-2. Il peut séléctionner un profil de prompt avec la main droite. Ex : lève l'index droit pour confirmer le prompt correspondant au filtre visualisé en temps reel.
-3. Il déclenche la capture en levant le pouce gauche.
-4. Il valide l’impression en levant le pouce droit.
+- La **prévisualisation** n’affecte jamais l’image envoyée à l’IA.
+- Le **profil sélectionné à droite** détermine réellement le prompt envoyé à Stable Diffusion.
+- Les gestes système (capture / impression) sont isolés pour éviter tout conflit.
 
 ---
 
-# 🔧 Prérequis matériel
+# 3. Système d’interaction gestuelle
+
+## Règles fondamentales
+
+- Le pouce n’est **jamais utilisé pour choisir un profil**
+- Les profils commencent à partir de l’index levé
+- Un poing fermé = état par défaut
+- Le nombre de doigts levés correspond exactement au numéro du profil
+
+---
+
+# 4. Profils de filtres & prompts
+
+## Logique
+
+La main gauche permet de **visualiser** un style.
+
+La main droite permet de **confirmer l’application réelle du prompt IA correspondant**.
+
+Le nombre de doigts levés est identique pour la preview et la sélection.
+
+## Prompts de Profils
+
+**Profil 1 : Médiéval**
+```python
+PROMPT_MEDIEVAL = (
+    "medieval fantasy illustration, cinematic lighting, ultra detailed, realistic textures, "
+    "knight armor with engraved steel, leather straps, medieval tunic, "
+    "(stone castle background:1.3), (torch light atmosphere:1.2), warm fire glow, "
+    "(dramatic volumetric lighting:1.2), epic fantasy mood, "
+    "high detail fabric texture, 14th century aesthetic, "
+    "sharp focus, 4k, professional fantasy artwork"
+)
+
+NEGATIVE_PROMPT_MEDIEVAL = (
+    "modern clothes, futuristic objects, neon lights, cyberpunk, low quality, blurry, "
+    "extra fingers, extra limbs, deformed hands, bad anatomy"
+)
+
+```
+
+**Profil 2 : Jungle**
+```python
+PROMPT_JUNGLE = (
+    "tropical jungle portrait, cinematic natural lighting, ultra realistic, "
+    "(lush green foliage:1.3), (hanging vines:1.2), dense rainforest background, "
+    "sunlight rays through trees, humid atmosphere, "
+    "(leaf crown and natural elements integrated into clothing:1.2), "
+    "earth tones color palette, shallow depth of field, "
+    "high detail skin texture, photorealistic, 4k photography"
+)
+
+NEGATIVE_PROMPT_JUNGLE = (
+    "urban background, buildings, modern objects, cold lighting, cyberpunk, "
+    "low resolution, blurry, extra fingers, extra limbs, bad anatomy"
+)
+```
+
+**Profil 3 : Futuriste**
+```python
+PROMPT_FUTURISTIC = (
+    "futuristic sci-fi portrait, cinematic lighting, ultra detailed, "
+    "(holographic interface around subject:1.3), (floating transparent screens:1.2), "
+    "cyberpunk city background, neon cyan and magenta glow, "
+    "(advanced wearable technology:1.2), glowing circuits on clothes, "
+    "high contrast lighting, reflective glass surfaces, "
+    "professional sci-fi photography, 4k, sharp focus"
+)
+
+NEGATIVE_PROMPT_FUTURISTIC = (
+    "medieval objects, nature forest, warm lighting, low detail, blurry, "
+    "extra fingers, extra limbs, deformed anatomy"
+)
+```
+
+**Profil 4 : Peinture**
+```python
+PROMPT_ARTISTIC = (
+    "oil painting portrait, renaissance inspired, dramatic chiaroscuro lighting, "
+    "(visible brush strokes:1.3), textured canvas effect, "
+    "warm golden highlights, deep shadows, "
+    "classical fine art composition, museum quality painting, "
+    "high detail face, realistic proportions, "
+    "8k resolution, masterpiece"
+)
+
+NEGATIVE_PROMPT_ARTISTIC = (
+    "photography, modern background, flat lighting, low quality, "
+    "extra fingers, extra limbs, bad anatomy"
+)
+```
+---
+
+## Tableau récapitulatif
+
+| Geste | Main gauche (Preview filtre) | Main droite (Prompt appliqué) | Exemple visuel |
+|-------|-----------------------------|-------------------------------|----------------|
+| ✊ Poing fermé | Aucun filtre | Image classique (pas de prompt) | *(Image par défaut ici)* |
+| ☝ 1 doigt | Filtre futuriste | Prompt futuriste cartoon | *(Image exemple profil 1 ici)* |
+| ✌ 2 doigts | Filtre médiéval | Prompt médiéval | *(Image exemple profil 2 ici)* |
+| 🤟 3 doigts | Filtre naturel | Prompt nature réaliste | *(Image exemple profil 3 ici)* |
+| 🖖 4 doigts | Filtre artistique | Prompt artistique avancé | *(Image exemple profil 4 ici)* |
+
+
+---
+
+# 5. Workflow utilisateur
+
+## Exemple d’utilisation
+
+1. L’utilisateur lance le programme.
+2. Il se place devant la webcam.
+3. Il teste différents styles avec la main gauche.
+4. Lorsqu’un filtre lui plaît, il reproduit le même nombre de doigts avec la main droite.
+5. Un message confirme : *“Profil X appliqué”*.
+6. Il déclenche la capture avec 👍 pouce gauche.
+7. L’image est générée par Stable Diffusion.
+8. Il valide l’impression avec 👍 pouce droit.
+
+---
+
+# 6. Architecture technique
+
+## Vue simplifiée du pipeline
+
+1. OpenCV capture une frame
+2. MediaPipe détecte les mains
+3. Le système compte les doigts
+4. Sélection du profil
+5. Capture image originale
+6. Encodage base64
+7. Envoi à Stable Diffusion
+8. Réception image stylisée
+9. Ajout du logo
+10. Impression
+
+---
+
+## Modules utilisés
+
+### 🎥 OpenCV
+
+Rôle :
+
+- Capture webcam
+- Affichage temps réel
+- Dessin UI
+- Application des filtres preview
+
+Les filtres type “Snap” sont réalisés via :
+
+- Modification des canaux RGB
+- Flou gaussien
+- Vignette
+- Overlay PNG (textures, feuillages, lumières)
+
+Aucune librairie externe supplémentaire n’est nécessaire pour ces effets.
+
+---
+
+### 🖐 MediaPipe
+
+Rôle :
+
+- Détection de 2 mains max
+- Extraction de 21 points clés par main
+- Détermination des doigts levés
+
+Permet :
+
+- Identifier main gauche / droite
+- Compter les doigts
+- Déclencher actions système
+
+---
+
+### 🌐 Requests
+
+Permet :
+
+- Envoyer l’image en base64 à Stable Diffusion WebUI
+- Récupérer l’image générée
+
+---
+
+### 🤖 Stable Diffusion XL + ControlNet
+
+Utilisé en mode `img2img` avec :
+
+- SDXL
+- ControlNet OpenPose
+
+ControlNet permet de conserver la posture tout en modifiant le style.
+
+Paramètres clés :
+
+- CFG Scale
+- Denoising Strength
+- Steps
+- Sampler
+
+---
+
+## Séparation critique
+
+- `frame_original` → envoyé à l’IA
+- `frame_preview` → utilisé uniquement pour les filtres
+
+Cela garantit :
+
+- Aucune altération involontaire
+- Architecture propre
+- Debug simplifié
+
+---
+
+# 7. Prérequis matériel
 
 | Composant | Spécification |
 |-----------|--------------|
-| **GPU** | NVIDIA avec CUDA (RTX 2060+ recommandé) |
-| **Webcam** | Résolution 720p minimum |
-| **Écran** | 3840×1080 (dual monitor recommandé) |
-| **Imprimante** | HP Color LaserJet 5700 + papier A6 glacé 200g |
-| **RAM** | 16 GB minimum (32 GB recommandé pour SDXL) |
+| GPU | NVIDIA RTX 2060+ recommandé |
+| RAM | 16GB minimum (32GB recommandé) |
+| Webcam | 720p minimum |
+| Écran | 3840x1080 recommandé |
+| Imprimante | HP Color LaserJet 5700 |
 
 ---
 
-# 🔧 Dépendances logicielles
+# 8. Dépendances logicielles
 
 ## Stable Diffusion WebUI
 
 - PyTorch 2.5.1 + CUDA 12.1
 - xFormers 0.0.23
-- Diffusers 0.31.0 (SDXL)
-- ControlNet Aux 0.0.10 (OpenPose)
+- Diffusers 0.31.0
+- ControlNet Aux 0.0.10
 - MediaPipe 0.10.21
 - ONNX Runtime GPU 1.17.1
 
@@ -120,57 +298,47 @@ Les gestes système sont séparés pour éviter toute ambiguïté :
 
 ---
 
-**TODO** : Expliquer comment avec uniquement openCV il est possible de faire des filtres type snap (ajouter/modifier des couleurs, ajouter des vignettes, des overlay PNG etc.)
-...
+# 9. Recherche & choix de conception
+
+## Problème 1 : Conflit avec le pouce
+
+Initialement utilisé pour un profil.
+
+Problème : déjà assigné à l’impression.
+
+Solution :
+
+- Suppression du pouce comme sélection de profil
+- Profils démarrent à l’index
 
 ---
 
-# 🔬 Recherche et développement du concept
+## Problème 2 : Conflit avec ✌
 
-## Problème 1 : Conflit avec le pouce levé
+Index + majeur servaient à la capture.
 
-Initialement, 5 profils étaient prévus :
+Conflit avec Profil 2.
 
-- Profil 1 devait correspondre au **pouce levé seul**.
+Solution :
 
-Problème :
-Le pouce était déjà utilisé pour déclencher l'impression.
+- Suppression du geste ✌ pour capturer
+- 👍 Gauche → Capture
+- 👍 Droite → Impression
 
-Solution adoptée :
-- Suppression du pouce comme geste de sélection de profil.
-- Les profils commencent désormais à partir de l’index levé.
-- Nombre total réduit à **4 profils personnalisés + 1 profil par défaut**.
+Résultat :
 
----
-
-## Problème 2 : Conflit avec le symbole ✌️ (index + majeur)
-
-Le Profil 2 correspondait naturellement à :
-
-Index + majeur levés.
-
-Mais ce geste était initialement utilisé pour déclencher la capture photo.
-
-Cela créait un conflit logique :
-Le système ne pouvait pas distinguer si l’utilisateur voulait :
-- Sélectionner un profil
-- Prendre la photo
-
-Solution adoptée :
-
-- Suppression complète du geste ✌️ comme déclencheur de capture.
-- Nouvelle logique :
-  - 👍 Pouce gauche → Capture
-  - 👍 Pouce droit → Impression
-
-Cela permet :
-
-- Une séparation claire des responsabilités entre les mains
-- Aucun conflit entre sélection de profil et actions système
-- Une interaction plus intuitive
+- Interaction claire
+- Aucun conflit logique
+- Système intuitif
 
 ---
 
-## Idées pour les curieux :
-- 
+# 10. Pistes d’amélioration
 
+- Segmentation sujet/fond
+- Filtres dynamiques animés
+- Optimisation GPU
+- Interface plein écran dédiée
+- Mode multi-utilisateur avancé
+
+---

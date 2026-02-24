@@ -113,11 +113,11 @@ Validation avec 👍 pouce droit.
 
 | Geste | Profil | Image |
 |-------|--------|-------|
-| ✊ Poing fermé | Default (aucun prompt) | ![Default](images_profils/profil0.jpg) |
-| ☝ 1 doigt | Futuriste | ![Profil 1 Futuriste](images_profils/profil1.jpg) |
-| ✌ 2 doigts | Médiéval | ![Profil 2 Médiéval](images_profils/profil2.png) |
-| 🤟 3 doigts | Jungle / Nature | ![Profil 3 Jungle](images_profils/profil3.png) |
-| 🖖 4 doigts | Artistique | ![Profil 4 Artistique](images_profils/profil4.jpg) |
+| ✊ Poing fermé | Default | <img src="images_profils/profil0.jpg" width="200"> |
+| ☝ 1 doigt | Futuriste cartoon | <img src="images_profils/profil1.jpg" width="200"> |
+| ✌ 2 doigts | Médiéval | <img src="images_profils/profil2.png" width="200"> |
+| 🤟 3 doigts | Naturel / Jungle | <img src="images_profils/profil3.png" width="200"> |
+| 🖖 4 doigts | Artistique / Peinture | <img src="images_profils/profil4.jpg" width="200"> |
 
 ## Prompts de Profils
 

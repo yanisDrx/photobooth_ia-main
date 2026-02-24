@@ -1,4 +1,4 @@
-# 🎨 Photo Booth IA – MDM 2025
+# Photo Booth IA – MDM 2025
 
 Photobooth intelligent combinant vision par ordinateur, interaction gestuelle et génération d’images via Stable Diffusion XL.
 
@@ -6,7 +6,7 @@ Ce projet propose une expérience immersive où l’utilisateur interagit unique
 
 ---
 
-# 📑 Sommaire
+# Sommaire
 
 - [1. Présentation du projet](#1-présentation-du-projet)
 - [2. Storyboard utilisateur (expérience complète)](#2-storyboard-utilisateur-expérience-complète)
@@ -269,12 +269,10 @@ Solution :
 
 ---
 
-## Conflit avec ✌
+## Conflit avec Symbole V
 
 Servait à capturer.
-
 Conflit avec Profil 2.
-
 Solution :
 
 - Capture = 👍 gauche
@@ -286,8 +284,4 @@ Interaction claire et intuitive.
 
 # 10. Pistes d’amélioration
 
-- Segmentation sujet/fond
-- Filtres animés en temps réel
-- Optimisation GPU
-- Interface plein écran dédiée
-- Mode multi-utilisateur
+- ...

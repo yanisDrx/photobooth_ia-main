@@ -15,9 +15,8 @@ Ce projet propose une expérience immersive où l’utilisateur interagit unique
 - [5. Profils de filtres & prompts](#5-profils-de-filtres--prompts)
 - [6. Architecture technique](#6-architecture-technique)
 - [7. Prérequis matériel](#7-prérequis-matériel)
-- [8. Dépendances logicielles](#8-dépendances-logicielles)
-- [9. Recherche & choix de conception](#9-recherche--choix-de-conception)
-- [10. Pistes d’amélioration](#10-pistes-damélioration)
+- [8. Recherche & choix de conception](#9-recherche--choix-de-conception)
+- [9. Pistes d’amélioration](#10-pistes-damélioration)
 
 ---
 
@@ -200,14 +199,23 @@ NEGATIVE_PROMPT_ARTISTIC = (
 9. Ajout logo
 10. Impression
 
----
+## Dépendances Logicielles
+### Stable Diffusion WebUI
 
-## Séparation critique
+- PyTorch 2.5.1 + CUDA 12.1
+- xFormers 0.0.23
+- Diffusers 0.31.0
+- ControlNet Aux 0.0.10
+- MediaPipe 0.10.21
+- ONNX Runtime GPU 1.17.1
 
-- `frame_original` → envoyé à l’IA
-- `frame_preview` → utilisé uniquement pour l’affichage
+### Photo Booth
 
-Garantit une architecture propre et sans altération involontaire.
+- OpenCV 4.11.0
+- MediaPipe 0.10.21
+- NumPy 1.26.2
+- Requests 2.32.5
+- Python 3.10.x
 
 ---
 
@@ -225,22 +233,6 @@ Garantit une architecture propre et sans altération involontaire.
 
 # 8. Dépendances logicielles
 
-## Stable Diffusion WebUI
-
-- PyTorch 2.5.1 + CUDA 12.1
-- xFormers 0.0.23
-- Diffusers 0.31.0
-- ControlNet Aux 0.0.10
-- MediaPipe 0.10.21
-- ONNX Runtime GPU 1.17.1
-
-## Photo Booth
-
-- OpenCV 4.11.0
-- MediaPipe 0.10.21
-- NumPy 1.26.2
-- Requests 2.32.5
-- Python 3.10.x
 
 ---
 

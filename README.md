@@ -42,16 +42,12 @@ L’objectif est de créer une expérience fluide, intuitive et immersive.
 ### Étape 1 — Positionnement
 L’utilisateur se place devant la webcam.
 
----
-
 ### Étape 2 — Prévisualisation (main gauche)
 
 Il lève des doigts avec la **main gauche** pour tester différents styles.
 
  -> Cette action applique uniquement un filtre local (preview).
  -> Aucun prompt n’est encore envoyé à l’IA.
-
----
 
 ### Étape 3 — Sélection du style (main droite)
 
@@ -60,16 +56,12 @@ Il reproduit le même nombre de doigts avec la **main droite**.
  -> Cette action sélectionne officiellement le profil.
  -> Le prompt correspondant est chargé et sera transmis à l’IA lors de la génération.
 
----
-
 ### Étape 4 — Capture
 
 Il déclenche la capture avec 👍 pouce gauche.
 
  -> L’image originale est enregistrée.
  -> Le prompt validé (main droite) est associé à cette image.
-
----
 
 ### Étape 5 — Génération IA
 
@@ -79,8 +71,6 @@ Le système envoie à Stable Diffusion :
 - le prompt sélectionné via la main droite
 
 L’IA applique le style choisi.
-
----
 
 ### Étape 6 — Impression
 

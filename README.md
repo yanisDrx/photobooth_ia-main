@@ -202,15 +202,6 @@ NEGATIVE_PROMPT_ARTISTIC = (
 
 ---
 
-## Séparation critique
-
-- `frame_original` → envoyé à l’IA
-- `frame_preview` → utilisé uniquement pour l’affichage
-
-Garantit une architecture propre et sans altération involontaire.
-
----
-
 # 7. Prérequis matériel
 
 | Composant | Spécification |
@@ -246,20 +237,7 @@ Garantit une architecture propre et sans altération involontaire.
 
 # 9. Recherche & choix de conception
 
-## Conflit du pouce
-
-Le pouce était initialement un profil.
-
-Problème : déjà utilisé pour l’impression.
-
-Solution :
-
-- Suppression du pouce comme profil
-- Profils démarrent à l’index
-
----
-
-## Conflit avec ✌
+## Modification du Projet initial - Conflit avec ✌
 
 Servait à capturer.
 
@@ -270,14 +248,8 @@ Solution :
 - Capture = 👍 gauche
 - Impression = 👍 droite
 
-Interaction claire et intuitive.
-
 ---
 
 # 10. Pistes d’amélioration
 
-- Segmentation sujet/fond
-- Filtres animés en temps réel
-- Optimisation GPU
-- Interface plein écran dédiée
-- Mode multi-utilisateur
+- 

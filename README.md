@@ -129,9 +129,59 @@ NEGATIVE_PROMPT_MEDIEVAL = (
     "modern clothes, futuristic objects, neon lights, cyberpunk, low quality, blurry, "
     "extra fingers, extra limbs, deformed hands, bad anatomy"
 )
+
 ```
 
-*(Les autres profils restent identiques à ta version actuelle)*
+**Profil 2 : Jungle**
+```python
+PROMPT_JUNGLE = (
+    "tropical jungle portrait, cinematic natural lighting, ultra realistic, "
+    "(lush green foliage:1.3), (hanging vines:1.2), dense rainforest background, "
+    "sunlight rays through trees, humid atmosphere, "
+    "(leaf crown and natural elements integrated into clothing:1.2), "
+    "earth tones color palette, shallow depth of field, "
+    "high detail skin texture, photorealistic, 4k photography"
+)
+
+NEGATIVE_PROMPT_JUNGLE = (
+    "urban background, buildings, modern objects, cold lighting, cyberpunk, "
+    "low resolution, blurry, extra fingers, extra limbs, bad anatomy"
+)
+```
+
+**Profil 3 : Futuriste**
+```python
+PROMPT_FUTURISTIC = (
+    "futuristic sci-fi portrait, cinematic lighting, ultra detailed, "
+    "(holographic interface around subject:1.3), (floating transparent screens:1.2), "
+    "cyberpunk city background, neon cyan and magenta glow, "
+    "(advanced wearable technology:1.2), glowing circuits on clothes, "
+    "high contrast lighting, reflective glass surfaces, "
+    "professional sci-fi photography, 4k, sharp focus"
+)
+
+NEGATIVE_PROMPT_FUTURISTIC = (
+    "medieval objects, nature forest, warm lighting, low detail, blurry, "
+    "extra fingers, extra limbs, deformed anatomy"
+)
+```
+
+**Profil 4 : Peinture**
+```python
+PROMPT_ARTISTIC = (
+    "oil painting portrait, renaissance inspired, dramatic chiaroscuro lighting, "
+    "(visible brush strokes:1.3), textured canvas effect, "
+    "warm golden highlights, deep shadows, "
+    "classical fine art composition, museum quality painting, "
+    "high detail face, realistic proportions, "
+    "8k resolution, masterpiece"
+)
+
+NEGATIVE_PROMPT_ARTISTIC = (
+    "photography, modern background, flat lighting, low quality, "
+    "extra fingers, extra limbs, bad anatomy"
+)
+```
 
 ---
 

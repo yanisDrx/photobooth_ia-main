@@ -37,7 +37,9 @@ L’objectif est de créer une expérience fluide, intuitive et immersive.
 
 ---
 
-# 2. Storyboard utilisateur (expérience complète)
+# 2. Timeline utilisateur + Storyboard (expérience complète)
+
+## Timeline :
 
 ### Étape 1 — Positionnement
 L’utilisateur se place devant la webcam.
@@ -83,6 +85,10 @@ Validation avec 👍 pouce droit.
  -> Un chargement indiquant la progression sur l'écoulement du cooldown s'affiche.
  -> Une fois le cooldown terminé, un message de confirmation s'affiche.
  -> L’image générée est imprimée.
+
+## Storyboard :
+
+![Storyboard complet du Photo Booth IA](images_profils/storyboard.png)
 
 ---
 

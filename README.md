@@ -1,4 +1,5 @@
 # Photo Booth IA – MDM 2025
+Lien vers le REPO : *https://github.com/yanisDrx/photobooth_ia-main/tree/features*
 
 Photobooth intelligent combinant vision par ordinateur, interaction gestuelle et génération d’images via Stable Diffusion XL.
 
